@@ -62,14 +62,14 @@ def loss(ts, _w1, _b1, _w2, _b2, t):
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
 
 
-w1 = 0.01 * np.random.randn(784, 100)
-b1 = np.zeros(100)
-w2 = 0.01 * np.random.randn(100, 10) 
+w1 = 0.01 * np.random.randn(784, 30)
+b1 = np.zeros(30)
+w2 = 0.01 * np.random.randn(30, 10) 
 b2 = np.zeros(10)
 
 
-for i in range(3):
-    batch_mask = np.random.choice(50, 100)
+for i in range(1500):
+    batch_mask = np.random.choice(3, 10)
     trainSet = x_train[batch_mask]
     lossW = lambda W: loss(trainSet, w1, b1, w2, b2, t_train[batch_mask])
     w1Grad = numerical_gradient(lossW, w1)
@@ -77,28 +77,19 @@ for i in range(3):
     w2Grad = numerical_gradient(lossW, w2)
     b2Grad = numerical_gradient(lossW, b2)
 
-    w1 = w1 - 0.1 * w1Grad
-    b1 = b1 - 0.1 * b1Grad
-    w2 = w2 - 0.1 * w2Grad
-    b2 = b2 - 0.1 * b2Grad
+    w1 = w1 - 0.01 * w1Grad
+    b1 = b1 - 0.001 * b1Grad
+    w2 = w2 - 0.01 * w2Grad
+    b2 = b2 - 0.001 * b2Grad
 
     print(lossW(0))
 
-for i in range(1):
-    batch_mask = np.random.choice(50, 10)
+    batch_mask = np.random.choice(3, 10)
     testX = x_train[batch_mask]
     testY = t_train[batch_mask]
     pre = predict(testX, w1, b1, w2, b2)
-    print(pre, testY)
-    print(np.argmax(pre, axis=1), np.argmax(testY, axis=1))
-    print("---------")
-# b1Grad = numerical_gradient(loss, b1)
-# w2Grad = numerical_gradient(loss, w2)
-# b2Grad = numerical_gradient(loss, b2)
-
-# print(t_train[batch_mask])
-# P = predict(trainSet, w1, b1, w2, b2, t_train[batch_mask])
-# print(P)
-
-
-
+    print(pre * 100)
+    pre = np.argmax(pre, axis=1)
+    ans = np.argmax(testY, axis=1)
+    for i in range(len(pre)):
+        print(pre[i], "->", ans[i])
